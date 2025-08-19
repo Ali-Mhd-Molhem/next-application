@@ -1,0 +1,17 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build Docker image
+        run: docker build -t next-application .
+        
+      - name: Run tests
+        run: docker run --rm next-application npm test
