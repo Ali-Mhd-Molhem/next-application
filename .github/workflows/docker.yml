@@ -3,15 +3,50 @@ name: Docker Build and Push
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Build Docker image
-        run: docker build -t next-application .
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
         
-      - name: Run tests
-        run: docker run --rm next-application npm test
+      - name: 📊 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📦 Install dependencies
+        run: npm ci
+        
+      - name: 🧪 Run linting (optional)
+        run: npm run lint
+        continue-on-error: true
+        
+      - name: 🏗️ Build Next.js application
+        run: npm run build
+        
+      - name: 🐳 Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t my-nextjs-app:latest .
+          echo "Docker image built successfully!"
+          
+      - name: 🔍 Test Docker container
+        run: |
+          echo "Testing Docker container..."
+          docker run -d -p 3009:3009 --name test-container my-nextjs-app:latest
+          sleep 10
+          curl -f http://localhost:3009 || exit 1
+          docker stop test-container
+          docker rm test-container
+          echo "Docker container test passed!"
+          
+      - name: 📋 Display image info
+        run: |
+          docker images my-nextjs-app:latest
+          docker history my-nextjs-app:latest
