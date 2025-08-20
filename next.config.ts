@@ -8,15 +8,15 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/blog",
-        destination: `http://localhost:4009/blog`,
+        destination: `https://next-one-1.vercel.app/blog`,
       },
       {
         source: "/blog/:path+",
-        destination: `http://localhost:4009/blog/:path+`,
+        destination: `https://next-one-1.vercel.app/blog/:path+`,
       },
       {
         source: "/blog-static/_next/:path+",
-        destination: `http://localhost:4009/blog-static/_next/:path+`,
+        destination: `https://next-one-1.vercel.app/blog-static/_next/:path+`,
       },
     ];
   },
